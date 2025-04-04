@@ -16,32 +16,32 @@ const topModels: TopModel[] = [
   {
     id: 1,
     name: "JENNY WILSON",
-    image: "/top-models/jenny-wilson.jpg",
+    image: "/images/extra/01.png",
   },
   {
     id: 2,
     name: "RALPH EDWARDS",
-    image: "/top-models/ralph-edwards.jpg",
+    image: "/images/extra/02.png",
   },
   {
     id: 3,
     name: "KRISTIN WATSON",
-    image: "/top-models/kristin-watson.jpg",
+    image: "/images/extra/03.png",
   },
   {
     id: 4,
     name: "GUY HAWKINS",
-    image: "/top-models/guy-hawkins.jpg",
+    image: "/images/extra/04.png",
   },
   {
     id: 5,
     name: "CAMERON DIAZ",
-    image: "/top-models/cameron-diaz.jpg",
+    image: "/images/extra/05.png",
   },
   {
     id: 6,
     name: "MICHAEL JORDAN",
-    image: "/top-models/michael-jordan.jpg",
+    image: "/images/extra/06.png",
   },
 ]
 
@@ -100,12 +100,14 @@ export default function TopModelsCarousel() {
                 {/* Model image */}
                 <Image src={model.image || "/placeholder.svg"} alt={model.name} fill className="object-cover" />
 
-                {/* Vertical name label */}
-                <div className="absolute top-0 left-0 bottom-0 flex items-center">
-                  <div className="bg-black/30 p-2 flex items-center h-full">
-                    <p className="text-white text-2xl font-bold whitespace-nowrap transform -rotate-90 origin-center translate-y-20">
-                      {model.name}
-                    </p>
+                {/* Improved vertical name label */}
+                <div className="absolute top-0 left-0 h-full flex items-center">
+                  <div className="h-full flex items-center">
+                    <div className="relative w-12 h-full bg-gradient-to-r from-black/60 to-transparent">
+                      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 -rotate-90 whitespace-nowrap origin-center w-[360px]">
+                        <p className="text-white text-2xl font-bold tracking-wider translate-x-5">{model.name}</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -146,4 +148,3 @@ export default function TopModelsCarousel() {
     </section>
   )
 }
-

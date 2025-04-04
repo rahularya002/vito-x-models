@@ -1,4 +1,5 @@
 import AboutUs from "@/components/About";
+import BrandCollaborations from "@/components/Brands";
 import FooterWithLogo from "@/components/Footer";
 import Hero from "@/components/Hero";
 import Models from "@/components/Models";
@@ -14,6 +15,7 @@ export default function Home() {
       <Hero />
       <Models />
       <TopModelsCarousel />
+      <BrandCollaborations />
       <AboutUs />
       <InstagramGallery />
       <FooterWithLogo />

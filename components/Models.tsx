@@ -17,43 +17,43 @@ const models: Model[] = [
   {
     id: 1,
     name: "Alex Morgan",
-    image: "/models/model-1.jpg",
+    image: "/images/models/Group 4.png",
     categories: ["WOMEN", "FASHION"],
   },
   {
     id: 2,
     name: "James Lee",
-    image: "/models/model-2.jpg",
+    image: "/images/models/Group 5.png",
     categories: ["FASHION", "COMMERCIAL"],
   },
   {
     id: 3,
     name: "Sofia Rodriguez",
-    image: "/models/model-3.jpg",
+    image: "/images/models/Group 6.png",
     categories: ["WOMEN", "GLAMOUR"],
   },
   {
     id: 4,
     name: "Cristien Paul",
-    image: "/models/model-4.jpg",
+    image: "/images/models/Group 7.png",
     categories: ["WOMEN", "PETITE"],
   },
   {
     id: 5,
     name: "Marcus Johnson",
-    image: "/models/model-5.jpg",
+    image: "/images/models/Group 8.png",
     categories: ["COMMERCIAL", "FASHION"],
   },
   {
     id: 6,
     name: "Aisha Khan",
-    image: "/models/model-6.jpg",
+    image: "/images/models/Group 9.png",
     categories: ["WOMEN", "GLAMOUR"],
   },
   {
     id: 7,
     name: "Liam Wilson",
-    image: "/models/model-7.jpg",
+    image: "/images/models/Group 10.png",
     categories: ["COMMERCIAL"],
   },
 ]
@@ -133,16 +133,14 @@ export default function Models() {
             {filteredModels.map((model) => (
               <div
                 key={model.id}
-                className="relative flex-shrink-0 w-[220px] h-[280px] rounded-3xl overflow-hidden snap-start"
+                className="relative flex-shrink-0 w-[220px] h-[280px] rounded-3xl overflow-hidden snap-start group"
               >
                 <Image src={model.image || "/placeholder.svg"} alt={model.name} fill className="object-cover" />
-
-                {/* Only show name for some models (like in the design) */}
-                {model.id === 4 && (
-                  <div className="absolute bottom-4 left-0 right-0 text-center">
-                    <p className="text-white text-lg font-medium">{model.name}</p>
-                  </div>
-                )}
+                
+                {/* Model name overlay that shows on hover */}
+                <div className="absolute bottom-0 left-0 right-0 bg-black/70 py-3 transform translate-y-full transition-transform duration-300 group-hover:translate-y-0">
+                  <p className="text-white text-lg font-medium text-center">{model.name}</p>
+                </div>
               </div>
             ))}
           </div>
@@ -151,4 +149,3 @@ export default function Models() {
     </section>
   )
 }
-

@@ -34,57 +34,57 @@ export default function InstagramGallery() {
   // Instagram gallery images
   const galleryImages = [
     {
-      src: "/placeholder.svg?height=300&width=300",
+      src: "/images/extra/11.png",
       alt: "Model with hat on pink background",
       className: "row-span-1 col-span-1"
     },
     {
-      src: "/placeholder.svg?height=600&width=300",
+      src: "/images/extra/12.png",
       alt: "Model in red dress",
       className: "row-span-2 col-span-1"
     },
     {
-      src: "/placeholder.svg?height=300&width=300",
+      src: "/images/extra/13.png",
       alt: "Model with yellow background",
       className: "row-span-1 col-span-1"
     },
     {
-      src: "/placeholder.svg?height=300&width=300",
+      src: "/images/extra/14.png",
       alt: "Model with headwrap",
       className: "row-span-1 col-span-1"
     },
     {
-      src: "/placeholder.svg?height=600&width=300",
+      src: "/images/extra/15.png",
       alt: "Model in blue dress",
       className: "row-span-2 col-span-1"
     },
     {
-      src: "/placeholder.svg?height=300&width=300",
+      src: "/images/extra/16.png",
       alt: "Model with purple lighting",
       className: "row-span-1 col-span-1"
     },
     {
-      src: "/placeholder.svg?height=300&width=300",
+      src: "/images/extra/17.png",
       alt: "Model in black and white",
       className: "row-span-1 col-span-1"
     },
     {
-      src: "/placeholder.svg?height=300&width=300",
+      src: "/images/extra/18.png",
       alt: "Model in colorful outfit",
       className: "row-span-1 col-span-1"
     },
     {
-      src: "/placeholder.svg?height=300&width=300",
+      src: "/images/extra/19.png",
       alt: "Model with black hoodie",
       className: "row-span-1 col-span-1"
     },
     {
-      src: "/placeholder.svg?height=300&width=300",
+      src: "/images/extra/20.png",
       alt: "Model with sunglasses",
       className: "row-span-1 col-span-1"
     },
     {
-      src: "/placeholder.svg?height=600&width=300",
+      src: "/images/extra/21.png",
       alt: "Model with dramatic lighting",
       className: "row-span-2 col-span-1"
     }

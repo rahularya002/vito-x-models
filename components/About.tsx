@@ -2,15 +2,15 @@ import Image from "next/image"
 
 export default function AboutUs() {
   return (
-    <section className="w-full bg-neutral-100">
+    <section className="w-full bg-neutral-100 pt-20">
       <div className="grid md:grid-cols-2 max-w-7xl mx-auto">
         {/* Left side - Runway Image */}
-        <div className="relative h-[400px] md:h-full min-h-[400px]">
+        <div className="relative h-[400px] md:h-full min-h-[400px] ">
           <Image
-            src="/placeholder.svg?height=800&width=600"
+            src="/images/extra/03.png"
             alt="Model walking on runway"
             fill
-            className="object-cover"
+            className="object-cover rounded-l-3xl"
             priority
           />
         </div>
