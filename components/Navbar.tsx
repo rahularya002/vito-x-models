@@ -67,9 +67,11 @@ export const Navbar = () => {
           
           {/* Contact Button */}
           <div className="hidden md:block">
-            <button className="bg-red-800 hover:bg-red-900 rounded-full py-2 px-6 text-white font-medium text-sm tracking-wide transition-all duration-300 transform hover:scale-105 shadow-sm">
-              Contact Us
-            </button>
+            <Link href={'/contact'}> 
+              <button className="bg-red-800 hover:bg-red-900 rounded-full py-2 px-6 text-white font-medium text-sm tracking-wide transition-all duration-300 transform hover:scale-105 shadow-sm">
+                Contact Us
+              </button>
+            </Link>
           </div>
           
           {/* Mobile Menu Button */}
@@ -102,9 +104,11 @@ export const Navbar = () => {
                 </li>
               ))}
             </ul>
+            <Link href={'/contact'}>
             <button className="w-full bg-red-800 hover:bg-red-900 rounded-full py-2 px-6 text-white font-medium text-sm tracking-wide transition-colors">
               Contact Us
             </button>
+            </Link>
           </div>
         </div>
       )}
