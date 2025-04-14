@@ -11,14 +11,17 @@ const options = {};
 let client: MongoClient;
 let clientPromise: Promise<MongoClient>;
 
+// Properly declare the global type extension
 declare global {
-  var _mongoClientPromise: Promise<MongoClient>;
+  // eslint-disable-next-line no-var
+  var _mongoClientPromise: Promise<MongoClient> | undefined;
 }
 
 if (!global._mongoClientPromise) {
   client = new MongoClient(uri!, options);
   global._mongoClientPromise = client.connect();
 }
-clientPromise = global._mongoClientPromise;
+
+clientPromise = global._mongoClientPromise!;
 
 export default clientPromise;
