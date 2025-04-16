@@ -1,4 +1,3 @@
-// lib/mongodb.ts
 import { MongoClient } from "mongodb";
 
 if (!process.env.MONGODB_URI) {
@@ -8,20 +7,20 @@ if (!process.env.MONGODB_URI) {
 const uri = process.env.MONGODB_URI;
 const options = {};
 
-let client: MongoClient;
-let clientPromise: Promise<MongoClient>;
-
 // Properly declare the global type extension
 declare global {
   // eslint-disable-next-line no-var
   var _mongoClientPromise: Promise<MongoClient> | undefined;
 }
 
-if (!global._mongoClientPromise) {
-  client = new MongoClient(uri!, options);
-  global._mongoClientPromise = client.connect();
-}
-
-clientPromise = global._mongoClientPromise!;
+// Create a cached connection variable
+let client: MongoClient;
+const clientPromise: Promise<MongoClient> = (() => {
+  if (!global._mongoClientPromise) {
+    client = new MongoClient(uri, options);
+    global._mongoClientPromise = client.connect();
+  }
+  return global._mongoClientPromise;
+})();
 
 export default clientPromise;
