@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { Menu, X } from "lucide-react"
+import { Menu, X, LogIn } from "lucide-react"
 
 export const Navbar = () => {
   const [scrolled, setScrolled] = useState(false)
@@ -65,11 +65,17 @@ export const Navbar = () => {
             </ul>
           </div>
           
-          {/* Contact Button */}
-          <div className="hidden md:block">
-            <Link href={'/contact'}> 
+          {/* Contact and Login Buttons */}
+          <div className="hidden md:flex items-center space-x-4">
+            <Link href={'/login'}>
+              <button className="flex items-center border border-red-800 text-red-800 hover:bg-red-800 hover:text-white rounded-full py-2 px-5 font-medium text-sm tracking-wide transition-all duration-300">
+                <LogIn size={16} className="mr-1" />
+                Login
+              </button>
+            </Link>
+            <Link href={'/signup'}> 
               <button className="bg-red-800 hover:bg-red-900 rounded-full py-2 px-6 text-white font-medium text-sm tracking-wide transition-all duration-300 transform hover:scale-105 shadow-sm">
-                Contact Us
+                Signup
               </button>
             </Link>
           </div>
@@ -104,10 +110,16 @@ export const Navbar = () => {
                 </li>
               ))}
             </ul>
-            <Link href={'/contact'}>
-            <button className="w-full bg-red-800 hover:bg-red-900 rounded-full py-2 px-6 text-white font-medium text-sm tracking-wide transition-colors">
-              Contact Us
-            </button>
+            <Link href={'/login'}>
+              <button className="w-full flex justify-center items-center border border-red-800 text-red-800 hover:bg-red-800 hover:text-white rounded-full py-2 px-5 font-medium text-sm tracking-wide transition-colors mb-3 cursor-pointer">
+                <LogIn size={16} className="mr-1" />
+                Login
+              </button>
+            </Link>
+            <Link href={'/signup'}>
+              <button className="w-full bg-red-800 hover:bg-red-900 rounded-full py-2 px-6 text-white font-medium text-sm tracking-wide transition-colors">
+                Sign up
+              </button>
             </Link>
           </div>
         </div>
