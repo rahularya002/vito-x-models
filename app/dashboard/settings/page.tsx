@@ -61,14 +61,14 @@ export default function SettingsPage() {
       })
       
       // Load notification settings from profile if available
-      if (profile.notification_settings) {
-        setNotificationSettings(profile.notification_settings)
-      }
+      // if (profile.notification_settings) {
+      //   setNotificationSettings(profile.notification_settings)
+      // }
       
       // Load privacy settings from profile if available
-      if (profile.privacy_settings) {
-        setPrivacySettings(profile.privacy_settings)
-      }
+      // if (profile.privacy_settings) {
+      //   setPrivacySettings(profile.privacy_settings)
+      // }
     }
   }, [profile, user])
 

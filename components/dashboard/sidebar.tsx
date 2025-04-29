@@ -16,11 +16,6 @@ const sidebarLinks = [
     icon: ShoppingBag,
   },
   {
-    name: "Models",
-    href: "/dashboard/models",
-    icon: Users,
-  },
-  {
     name: "Campaigns",
     href: "/dashboard/campaigns",
     icon: FileText,
