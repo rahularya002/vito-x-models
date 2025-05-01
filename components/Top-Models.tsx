@@ -16,32 +16,32 @@ type TopModel = {
 const topModels: TopModel[] = [
   {
     id: 1,
-    name: "JENNY WILSON",
+    name: "ARJUN MEHRA",
     image: "/images/extra/01.png",
   },
   {
     id: 2,
-    name: "RALPH EDWARDS",
+    name: "RAGHAV KAPOOR",
     image: "/images/extra/02.png",
   },
   {
     id: 3,
-    name: "KRISTIN WATSON",
+    name: "ANANYA IYER",
     image: "/images/extra/03.png",
   },
   {
     id: 4,
-    name: "GUY HAWKINS",
+    name: "PRIYA DESHMUKH",
     image: "/images/extra/04.png",
   },
   {
     id: 5,
-    name: "CAMERON DIAZ",
+    name: "ISHITA REDDY",
     image: "/images/extra/05.png",
   },
   {
     id: 6,
-    name: "MICHAEL JORDAN",
+    name: "SANJANA CHAUHAN",
     image: "/images/extra/06.png",
   },
 ]

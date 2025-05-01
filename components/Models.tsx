@@ -18,13 +18,13 @@ type Model = {
 const models: Model[] = [
   {
     id: 1,
-    name: "Alex Morgan",
+    name: "Alexa Morgan",
     image: "/images/models/Group 4.png",
     categories: ["WOMEN", "FASHION"],
   },
   {
     id: 2,
-    name: "James Lee",
+    name: "Judy Lee",
     image: "/images/models/Group 5.png",
     categories: ["FASHION", "COMMERCIAL"],
   },
@@ -48,7 +48,7 @@ const models: Model[] = [
   },
   {
     id: 6,
-    name: "Aisha Khan",
+    name: "suev",
     image: "/images/models/Group 9.png",
     categories: ["WOMEN", "GLAMOUR"],
   },
@@ -103,7 +103,7 @@ export default function Models() {
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            OUR MODELS
+            OUR AI MODELS
           </motion.h2>
 
           <motion.div 
