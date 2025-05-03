@@ -184,13 +184,7 @@ export default function NewProductPage() {
       // Add images
       productImages.forEach((image) => {
         formData.append('imageType', image.type)
-        // Convert the URL to a File object
-        fetch(image.url)
-          .then(res => res.blob())
-          .then(blob => {
-            const file = new File([blob], `${image.type}.jpg`, { type: 'image/jpeg' })
-            formData.append('imageFile', file)
-          })
+        formData.append('imageUrl', image.url)
       })
       
       // Call the server action

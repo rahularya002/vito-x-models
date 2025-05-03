@@ -1,4 +1,3 @@
-// File: app/api/upload/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from '@supabase/supabase-js';
 import jwt from "jsonwebtoken";
@@ -20,7 +19,7 @@ export async function POST(request: NextRequest) {
   try {
     // Get the token from the cookie
     const token = request.cookies.get('auth-token')?.value;
-    
+   
     if (!token) {
       return NextResponse.json(
         { error: 'Unauthorized' },
@@ -41,7 +40,7 @@ export async function POST(request: NextRequest) {
 
     // Extract user ID
     const userId = decodedToken.id;
-
+    
     // Process the upload
     const formData = await request.formData();
     const file = formData.get('file') as File;
@@ -53,13 +52,12 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-
-    // Generate a unique filename
+    
+    // Use the original filename instead of generating a unique one
     const fileExt = file.name.split('.').pop();
-    const fileName = `${userId}/${type}-${Date.now()}.${fileExt}`;
-    const filePath = `product-images/${fileName}`;
+    const filePath = `products/${userId}/${file.name}`;
 
-    // Upload to Supabase storage using service role (bypasses RLS)
+    // Upload to Supabase storage
     const { error: uploadError } = await supabase.storage
       .from('product-images')
       .upload(filePath, file);
@@ -77,9 +75,10 @@ export async function POST(request: NextRequest) {
       .from('product-images')
       .getPublicUrl(filePath);
 
-    return NextResponse.json(
-      { url: publicUrl }
-    );
+    // Return only the URL as expected by the frontend
+    return NextResponse.json({
+      url: publicUrl
+    });
   } catch (error) {
     console.error('Error in upload route:', error);
     return NextResponse.json(

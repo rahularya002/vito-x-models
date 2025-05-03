@@ -231,7 +231,7 @@ export default function AnalyticsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
           {/* Campaign Performance Chart */}
           <div className="bg-stone-900 rounded-xl p-6 border border-white/10">
-            <h2 className="text-xl font-bold text-white mb-6">Campaign Performance</h2>
+            <h1 className="text-xl font-bold text-white mb-6">Campaign Performance</h1>
             {campaignPerformanceData.length === 0 ? (
               <div className="flex items-center justify-center h-64 text-white/50">No data available</div>
             ) : (
