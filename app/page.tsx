@@ -14,10 +14,10 @@ export default function Home() {
       <Navbar />
       <Hero />
       <Models />
-      <TopModelsCarousel />
-      <BrandCollaborations />
-      <AboutUs />
-      <InstagramGallery />
+      <TopModelsCarousel id="our-models" />
+      <BrandCollaborations id="our-brands" />
+      <AboutUs id="about-us" />
+      <InstagramGallery id="social-platforms" />
       <FooterWithLogo />
     </div>
   );

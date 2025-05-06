@@ -1,5 +1,4 @@
 "use client"
-
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
@@ -25,9 +24,24 @@ export const Navbar = () => {
     }
   }, [])
 
+  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    e.preventDefault();
+    const element = document.getElementById(id);
+    if (element) {
+      const navbarHeight = 80; // Approximate navbar height
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - navbarHeight;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+      });
+    }
+  };
+
   return (
     <nav 
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
+      className={`fixed top-0 w-full z-70 transition-all duration-300 ${
         scrolled 
           ? "bg-white/90 backdrop-blur-md shadow-sm py-4" 
           : "bg-transparent py-6"
@@ -51,11 +65,12 @@ export const Navbar = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:block">
             <ul className="flex space-x-8">
-              {["our models", "talents", "about us", "news & articles"].map((item) => (
+              {["our models", "our brands", "about us", "Social platforms"].map((item) => (
                 <li key={item}>
                   <Link 
-                    href={`/${item.replace(/\s+&\s+|\s+/g, "-").toLowerCase()}`}
+                    href={`#${item.replace(/\s+&\s+|\s+/g, "-").toLowerCase()}`}
                     className="uppercase text-sm font-medium tracking-wide hover:text-red-800 relative group"
+                    onClick={(e) => scrollToSection(e, item.replace(/\s+&\s+|\s+/g, "-").toLowerCase())}
                   >
                     {item}
                     <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-red-800 transition-all duration-300 group-hover:w-full"></span>

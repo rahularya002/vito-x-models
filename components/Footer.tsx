@@ -37,13 +37,23 @@ export default function FooterWithLogo() {
           <nav>
             <ul className="flex flex-wrap justify-center gap-4 md:gap-8">
               {[
-                { name: "OUR MODELS", path: "/models" },
-                { name: "TALENTS", path: "/talents" },
-                { name: "ABOUT ME", path: "/about" },
-                { name: "NEWS & ARTICLES", path: "/news" },
+                { name: "OUR MODELS", path: "#our-models" },
+                { name: "OUR BRANDS", path: "#our-brands" },
+                { name: "ABOUT US", path: "#about-us" },
+                { name: "SOCIAL PLATFORMS", path: "#instagram" },
               ].map((link) => (
                 <li key={link.name}>
-                  <Link href={link.path} className="text-sm md:text-base hover:text-red-500 transition-colors">
+                  <Link 
+                    href={link.path} 
+                    className="text-sm md:text-base hover:text-red-500 transition-colors"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const element = document.getElementById(link.path.substring(1));
+                      if (element) {
+                        element.scrollIntoView({ behavior: "smooth" });
+                      }
+                    }}
+                  >
                     {link.name}
                   </Link>
                 </li>

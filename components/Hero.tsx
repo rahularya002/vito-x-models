@@ -57,25 +57,10 @@ export default function Hero() {
         </div>
 
         {/* Bottom section with asymmetrical layout */}
-        <div className="pb-16 md:pb-24 grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Left: Agency description in a creative format */}
+        <div className="pb-16 md:pb-24">
+          {/* CTA Buttons with creative styling */}
           <motion.div
-            className="relative"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-          >
-            <div className="h-0.5 w-24 bg-white mb-6"></div>
-            <p className="text-white text-lg max-w-xs">
-              Our agency envisions a world where
-              <span className="text-red-600 font-semibold"> uniqueness and diversity </span>
-              are celebrated, where everyone can step into the spotlight
-            </p>
-          </motion.div>
-
-          {/* Right: CTA Buttons with creative styling */}
-          <motion.div
-            className="space-y-4 md:ml-auto md:mr-16 self-end"
+            className="space-y-4 flex flex-col items-end"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.6 }}

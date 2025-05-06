@@ -16,7 +16,7 @@ const sidebarLinks = [
     icon: Users,
   },
   {
-    name: "Model Requests",
+    name: "Clients Requests",
     href: "/admin/model-requests",
     icon: ClipboardList,
   },

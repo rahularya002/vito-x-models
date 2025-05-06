@@ -64,14 +64,9 @@ const models: Model[] = [
 const categories = ["ALL", "WOMEN", "FASHION", "PETITE", "COMMERCIAL", "GLAMOUR"]
 
 export default function Models() {
-  const [activeCategory, setActiveCategory] = useState("ALL")
   const carouselRef = useRef<HTMLDivElement>(null)
   const sectionRef = useRef<HTMLElement>(null)
   const isInView = useInView(sectionRef, { once: false, amount: 0.2 })
-  
-  // Filter models based on active category
-  const filteredModels =
-    activeCategory === "ALL" ? models : models.filter((model) => model.categories.includes(activeCategory))
 
   // Scroll carousel left
   const scrollLeft = () => {
@@ -96,41 +91,14 @@ export default function Models() {
       transition={{ duration: 0.8 }}
     >
       <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
-          <motion.h2 
-            className="text-3xl md:text-4xl font-bold mb-6 md:mb-0"
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            OUR AI MODELS
-          </motion.h2>
-
-          <motion.div 
-            className="flex flex-wrap gap-4 md:gap-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-          >
-            {categories.map((category, index) => (
-              <motion.button
-                key={category}
-                className={`text-sm md:text-base font-medium transition-colors ${
-                  activeCategory === category
-                    ? "text-white border-b-2 border-white"
-                    : "text-gray-400 hover:text-gray-200"
-                }`}
-                onClick={() => setActiveCategory(category)}
-                initial={{ opacity: 0, y: 10 }}
-                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
-                transition={{ duration: 0.4, delay: 0.5 + index * 0.1 }}
-                whileHover={{ y: -2 }}
-              >
-                {category}
-              </motion.button>
-            ))}
-          </motion.div>
-        </div>
+        <motion.h2 
+          className="text-3xl md:text-4xl font-bold mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          AI MODELS
+        </motion.h2>
 
         <motion.div 
           className="relative"
@@ -165,7 +133,7 @@ export default function Models() {
             className="flex overflow-x-auto scrollbar-hide snap-x snap-mandatory gap-4 pb-4"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
-            {filteredModels.map((model, index) => (
+            {models.map((model, index) => (
               <motion.div
                 key={model.id}
                 className="relative flex-shrink-0 w-[220px] h-[280px] rounded-3xl overflow-hidden snap-start group"

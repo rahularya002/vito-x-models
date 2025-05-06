@@ -46,7 +46,7 @@ const topModels: TopModel[] = [
   },
 ]
 
-export default function TopModelsCarousel() {
+export default function TopModelsCarousel({ id }: { id?: string }) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const carouselRef = useRef<HTMLDivElement>(null)
   const sectionRef = useRef<HTMLElement>(null)
@@ -89,6 +89,7 @@ export default function TopModelsCarousel() {
   return (
     <motion.section 
       ref={sectionRef}
+      id={id}
       className="w-full bg-stone-100 py-12 px-4 md:px-8"
       initial={{ opacity: 0 }}
       animate={isInView ? { opacity: 1 } : { opacity: 0 }}
@@ -101,7 +102,7 @@ export default function TopModelsCarousel() {
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          OUR TOP MODELS
+          DIGITAL TWINS
         </motion.h2>
 
         <motion.div 

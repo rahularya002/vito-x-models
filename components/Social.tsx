@@ -3,11 +3,14 @@
 import { useState, useRef } from "react"
 import Image from "next/image"
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { motion, useInView } from "framer-motion"
 
-export default function InstagramGallery() {
+export default function InstagramGallery({ id }: { id?: string }) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(true)
+  const sectionRef = useRef<HTMLElement>(null)
+  const isInView = useInView(sectionRef, { once: false, amount: 0.2 })
 
   const checkScrollButtons = () => {
     if (scrollRef.current) {
@@ -91,10 +94,17 @@ export default function InstagramGallery() {
   ]
 
   return (
-    <section className="w-full py-12 px-4 md:px-8 bg-neutral-100">
+    <motion.section
+      ref={sectionRef}
+      id={id}
+      className="w-full bg-black py-16 px-4 md:px-8"
+      initial={{ opacity: 0 }}
+      animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+      transition={{ duration: 0.8 }}
+    >
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-red-800">INSTAGRAM</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-red-800">SOCIAL PLATFORMS</h2>
           
           <div className="flex gap-2">
             <button 
@@ -123,115 +133,148 @@ export default function InstagramGallery() {
         >
           {/* First column */}
           <div className="grid grid-rows-2 gap-4 min-w-[150px] md:min-w-[200px]">
-            <div className="relative h-[150px] md:h-[200px] w-[150px] md:w-[200px] rounded-lg overflow-hidden">
+            <div 
+              className="relative h-[150px] md:h-[200px] w-[150px] md:w-[200px] rounded-lg overflow-hidden cursor-pointer"
+              onClick={() => window.open('https://www.instagram.com/visionarybrothers.official', '_blank')}
+            >
               <Image 
                 src={galleryImages[0].src || "/placeholder.svg"} 
                 alt={galleryImages[0].alt}
                 fill
-                className="object-cover"
+                className="object-cover hover:scale-105 transition-transform duration-300"
               />
             </div>
-            <div className="relative h-[150px] md:h-[200px] w-[150px] md:w-[200px] rounded-lg overflow-hidden">
+            <div 
+              className="relative h-[150px] md:h-[200px] w-[150px] md:w-[200px] rounded-lg overflow-hidden cursor-pointer"
+              onClick={() => window.open('https://www.instagram.com/visionarybrothers.official', '_blank')}
+            >
               <Image 
                 src={galleryImages[8].src || "/placeholder.svg"} 
                 alt={galleryImages[8].alt}
                 fill
-                className="object-cover"
+                className="object-cover hover:scale-105 transition-transform duration-300"
               />
             </div>
           </div>
           
           {/* Second column */}
-          <div className="relative h-[310px] md:h-[410px] w-[150px] md:w-[200px] rounded-lg overflow-hidden">
+          <div 
+            className="relative h-[310px] md:h-[410px] w-[150px] md:w-[200px] rounded-lg overflow-hidden cursor-pointer"
+            onClick={() => window.open('https://www.instagram.com/visionarybrothers.official', '_blank')}
+          >
             <Image 
               src={galleryImages[1].src || "/placeholder.svg"} 
               alt={galleryImages[1].alt}
               fill
-              className="object-cover"
+              className="object-cover hover:scale-105 transition-transform duration-300"
             />
           </div>
           
           {/* Third column */}
           <div className="grid grid-rows-2 gap-4 min-w-[150px] md:min-w-[200px]">
-            <div className="relative h-[150px] md:h-[200px] w-[150px] md:w-[200px] rounded-lg overflow-hidden">
+            <div 
+              className="relative h-[150px] md:h-[200px] w-[150px] md:w-[200px] rounded-lg overflow-hidden cursor-pointer"
+              onClick={() => window.open('https://www.instagram.com/visionarybrothers.official', '_blank')}
+            >
               <Image 
                 src={galleryImages[2].src || "/placeholder.svg"} 
                 alt={galleryImages[2].alt}
                 fill
-                className="object-cover"
+                className="object-cover hover:scale-105 transition-transform duration-300"
               />
             </div>
-            <div className="relative h-[150px] md:h-[200px] w-[150px] md:w-[200px] rounded-lg overflow-hidden">
+            <div 
+              className="relative h-[150px] md:h-[200px] w-[150px] md:w-[200px] rounded-lg overflow-hidden cursor-pointer"
+              onClick={() => window.open('https://www.instagram.com/visionarybrothers.official', '_blank')}
+            >
               <Image 
                 src={galleryImages[3].src || "/placeholder.svg"} 
                 alt={galleryImages[3].alt}
                 fill
-                className="object-cover"
+                className="object-cover hover:scale-105 transition-transform duration-300"
               />
             </div>
           </div>
           
           {/* Fourth column */}
-          <div className="relative h-[310px] md:h-[410px] w-[150px] md:w-[200px] rounded-lg overflow-hidden">
+          <div 
+            className="relative h-[310px] md:h-[410px] w-[150px] md:w-[200px] rounded-lg overflow-hidden cursor-pointer"
+            onClick={() => window.open('https://www.instagram.com/visionarybrothers.official', '_blank')}
+          >
             <Image 
               src={galleryImages[4].src || "/placeholder.svg"} 
               alt={galleryImages[4].alt}
               fill
-              className="object-cover"
+              className="object-cover hover:scale-105 transition-transform duration-300"
             />
           </div>
           
           {/* Fifth column */}
           <div className="grid grid-rows-2 gap-4 min-w-[150px] md:min-w-[200px]">
-            <div className="relative h-[150px] md:h-[200px] w-[150px] md:w-[200px] rounded-lg overflow-hidden">
+            <div 
+              className="relative h-[150px] md:h-[200px] w-[150px] md:w-[200px] rounded-lg overflow-hidden cursor-pointer"
+              onClick={() => window.open('https://www.instagram.com/visionarybrothers.official', '_blank')}
+            >
               <Image 
                 src={galleryImages[5].src || "/placeholder.svg"} 
                 alt={galleryImages[5].alt}
                 fill
-                className="object-cover"
+                className="object-cover hover:scale-105 transition-transform duration-300"
               />
             </div>
-            <div className="relative h-[150px] md:h-[200px] w-[150px] md:w-[200px] rounded-lg overflow-hidden">
+            <div 
+              className="relative h-[150px] md:h-[200px] w-[150px] md:w-[200px] rounded-lg overflow-hidden cursor-pointer"
+              onClick={() => window.open('https://www.instagram.com/visionarybrothers.official', '_blank')}
+            >
               <Image 
                 src={galleryImages[6].src || "/placeholder.svg"} 
                 alt={galleryImages[6].alt}
                 fill
-                className="object-cover"
+                className="object-cover hover:scale-105 transition-transform duration-300"
               />
             </div>
           </div>
           
           {/* Sixth column */}
           <div className="grid grid-rows-2 gap-4 min-w-[150px] md:min-w-[200px]">
-            <div className="relative h-[150px] md:h-[200px] w-[150px] md:w-[200px] rounded-lg overflow-hidden">
+            <div 
+              className="relative h-[150px] md:h-[200px] w-[150px] md:w-[200px] rounded-lg overflow-hidden cursor-pointer"
+              onClick={() => window.open('https://www.instagram.com/visionarybrothers.official', '_blank')}
+            >
               <Image 
                 src={galleryImages[7].src || "/placeholder.svg"} 
                 alt={galleryImages[7].alt}
                 fill
-                className="object-cover"
+                className="object-cover hover:scale-105 transition-transform duration-300"
               />
             </div>
-            <div className="relative h-[150px] md:h-[200px] w-[150px] md:w-[200px] rounded-lg overflow-hidden">
+            <div 
+              className="relative h-[150px] md:h-[200px] w-[150px] md:w-[200px] rounded-lg overflow-hidden cursor-pointer"
+              onClick={() => window.open('https://www.instagram.com/visionarybrothers.official', '_blank')}
+            >
               <Image 
                 src={galleryImages[9].src || "/placeholder.svg"} 
                 alt={galleryImages[9].alt}
                 fill
-                className="object-cover"
+                className="object-cover hover:scale-105 transition-transform duration-300"
               />
             </div>
           </div>
           
           {/* Seventh column */}
-          <div className="relative h-[310px] md:h-[410px] w-[150px] md:w-[200px] rounded-lg overflow-hidden">
+          <div 
+            className="relative h-[310px] md:h-[410px] w-[150px] md:w-[200px] rounded-lg overflow-hidden cursor-pointer"
+            onClick={() => window.open('https://www.instagram.com/visionarybrothers.official', '_blank')}
+          >
             <Image 
               src={galleryImages[10].src || "/placeholder.svg"} 
               alt={galleryImages[10].alt}
               fill
-              className="object-cover"
+              className="object-cover hover:scale-105 transition-transform duration-300"
             />
           </div>
         </div>
       </div>
-    </section>
+    </motion.section>
   )
 }

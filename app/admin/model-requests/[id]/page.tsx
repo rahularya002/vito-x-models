@@ -55,9 +55,17 @@ const mockRequests = {
   },
 }
 
-export default function ModelRequestDetail({ params }: { params: { id: string } }) {
+interface PageProps {
+  params: Promise<{
+    id: string
+  }>,
+  searchParams: Promise<Record<string, string | string[] | undefined>>
+}
+
+export default async function ModelRequestDetail({ params, searchParams }: PageProps) {
   // Get the model request with profile data
-  const request = mockRequests[params.id as keyof typeof mockRequests]
+  const resolvedParams = await params
+  const request = mockRequests[resolvedParams.id as keyof typeof mockRequests]
 
   if (!request) {
     notFound()

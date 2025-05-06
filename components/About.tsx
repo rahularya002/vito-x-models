@@ -4,7 +4,7 @@ import Image from "next/image"
 import { motion, useInView } from "framer-motion"
 import { useRef } from "react"
 
-export default function AboutUs() {
+export default function AboutUs({ id }: { id?: string }) {
   const sectionRef = useRef<HTMLElement>(null)
   const isInView = useInView(sectionRef, { once: false, amount: 0.2 })
 
@@ -26,7 +26,8 @@ export default function AboutUs() {
   return (
     <motion.section
       ref={sectionRef}
-      className="w-full bg-neutral-100 pt-20"
+      id={id}
+      className="w-full bg-neutral-100 pt-20 pb-20"
       initial={{ opacity: 0 }}
       animate={isInView ? { opacity: 1 } : { opacity: 0 }}
       transition={{ duration: 0.8 }}
@@ -79,9 +80,12 @@ export default function AboutUs() {
             animate={isInView ? { opacity: 1 } : { opacity: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
           >
-            Welcome to Model Magnifique, where dreams take center stage and stars are born. We are not just a modeling
-            agency; we are a haven for aspiring models, a hub of creativity, and a launchpad for future icons of the
-            fashion and entertainment industry.
+            At Visionary Brothers, we are proud to present “Be the Royal Pick”, India’s first AI-powered male and female model showcase — where real faces meet virtual brilliance.
+            In a world where fashion is fast, we slow down to focus on crafting excellence. Whether you're a budding model or a brand seeking the perfect face, our platform blends authenticity with innovation. We build high-end digital twins — AI-generated versions of our registered models — that brands can select for photo shoots, ramp walks, and promotional campaigns.
+            This isn’t just modelling — it’s next-gen storytelling powered by AI.
+            With “Be the Royal Pick”, you’re entering a legacy.
+            Your digital twin, their royal pick.
+            Join Visionary Brothers Models to become a part of the future — where technology meets tradition, and your face becomes a brand’s first choice.
           </motion.p>
 
           {/* Stats */}
@@ -95,15 +99,15 @@ export default function AboutUs() {
                 animate={isInView ? "visible" : "hidden"}
                 variants={statsVariants}
               >
-                <motion.div 
+                {/* <motion.div 
                   className="text-3xl md:text-4xl font-bold mb-1"
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
                   transition={{ duration: 0.5, delay: 0.8 + (index * 0.2) }}
                 >
                   {index === 0 ? "24+" : index === 1 ? "215+" : "102+"}
-                </motion.div>
-                <motion.div 
+                </motion.div> */}
+                {/* <motion.div 
                   className="text-sm text-gray-400"
                   initial={{ opacity: 0 }}
                   animate={isInView ? { opacity: 1 } : { opacity: 0 }}
@@ -128,7 +132,7 @@ export default function AboutUs() {
                       Corporation
                     </>
                   )}
-                </motion.div>
+                </motion.div> */}
               </motion.div>
             ))}
           </div>

@@ -3,6 +3,7 @@
 import Image from "next/image"
 import { motion, useInView } from "framer-motion"
 import { useRef } from "react"
+import Link from "next/link"
 
 // Brand data type
 type Brand = {
@@ -45,13 +46,14 @@ const brands: Brand[] = [
   },
 ]
 
-export default function BrandCollaborations() {
+export default function BrandCollaborations({ id }: { id?: string }) {
   const sectionRef = useRef<HTMLElement>(null)
   const isInView = useInView(sectionRef, { once: false, amount: 0.2 })
 
   return (
     <motion.section 
       ref={sectionRef}
+      id={id}
       className="w-full bg-black py-16 px-4 md:px-8"
       initial={{ opacity: 0 }}
       animate={isInView ? { opacity: 1 } : { opacity: 0 }}
@@ -121,17 +123,18 @@ export default function BrandCollaborations() {
             Our agency has proudly partnered with some of the most prestigious brands in the fashion industry, creating
             iconic campaigns that showcase our exceptional talent.
           </motion.p>
-          
-          <motion.button 
-            className="mt-8 px-8 py-3 bg-transparent border border-red-800 text-red-800 hover:bg-red-800 hover:text-white rounded-full font-medium transition-colors duration-300"
-            initial={{ opacity: 0, y: 10 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
-            transition={{ duration: 0.5, delay: 1.1 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            Become a Partner
-          </motion.button>
+          <Link href={"/contact"}>
+            <motion.button 
+              className="mt-8 px-8 py-3 bg-transparent border border-red-800 text-red-800 hover:bg-red-800 hover:text-white rounded-full font-medium transition-colors duration-300"
+              initial={{ opacity: 0, y: 10 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+              transition={{ duration: 0.5, delay: 1.1 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              Become a Partner
+            </motion.button>
+          </Link>
         </motion.div>
       </div>
     </motion.section>

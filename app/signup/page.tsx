@@ -71,8 +71,8 @@ export default function SignupPage() {
   };
 
   return (
-    <main className="min-h-screen bg-black text-white pt-20">
-      <div className="container mx-auto px-4 py-12">
+    <main className="min-h-screen bg-black text-white">
+      <div className="container mx-auto px-4 my-auto">
         <div className="max-w-4xl mx-auto bg-stone-900 rounded-2xl overflow-hidden shadow-xl">
           <div className="grid md:grid-cols-2">
             {/* Left Column - Form */}
