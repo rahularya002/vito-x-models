@@ -1,12 +1,14 @@
 "use client"
 
 import { useState } from "react"
+import { useSession } from "next-auth/react"
 import { SupportSidebar } from "@/components/dashboard/SupportSidebar"
 import { ContactSupport } from "@/components/dashboard/ContactSupport"
 import { FAQ } from "@/components/dashboard/FAQ"
 import { LiveChat } from "@/components/dashboard/LiveChat"
 
 export default function SupportPage() {
+  const { data: session } = useSession()
   const [activeTab, setActiveTab] = useState("contact")
 
   const handleContactSubmit = async (formData: {
@@ -17,6 +19,10 @@ export default function SupportPage() {
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500));
   };
+
+  if (!session) {
+    return null; // or a loading state
+  }
 
   return (
     <div className="p-6 md:p-10 bg-black min-h-full">

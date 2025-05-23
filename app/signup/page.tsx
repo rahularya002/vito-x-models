@@ -7,7 +7,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { Eye, EyeOff } from "lucide-react"
-import { useAuth } from "@/lib/auth-context"
+import { signIn } from "next-auth/react"
 
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -22,7 +22,6 @@ export default function SignupPage() {
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const router = useRouter()
-  const { signUp } = useAuth()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target as HTMLInputElement
@@ -35,40 +34,49 @@ export default function SignupPage() {
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setIsSubmitting(true);
-  
+    e.preventDefault()
+    if (!formData.agreeTerms) {
+      setError("Please agree to the terms and conditions")
+      return
+    }
+
+    setIsSubmitting(true)
+    setError(null)
+
     try {
-      const response = await fetch('/api/auth/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-          fullName: formData.fullName,
-          companyName: formData.companyName,
-          industry: formData.industry,
-        }),
+      console.log("Submitting signup form with:", {
+        email: formData.email,
+        hasPassword: !!formData.password,
+        fullName: formData.fullName,
+        companyName: formData.companyName,
+        industry: formData.industry
       });
-  
-      const data = await response.json();
-  
-      if (!response.ok) {
-        setError(data.error || 'Failed to create account');
+      
+      // Use NextAuth's signIn function with isSignUp flag to create a new user
+      const result = await signIn("credentials", {
+        email: formData.email,
+        password: formData.password,
+        name: formData.fullName,
+        company: formData.companyName,
+        industry: formData.industry,
+        isSignUp: true,
+        redirect: false
+      });
+
+      if (result?.error) {
+        console.error("Signup error:", result.error);
+        setError(result.error || "Failed to create account. Please try again.");
       } else {
-        // Redirect to dashboard after successful signup
-        router.push('/dashboard');
+        // Redirect to login page after successful signup
+        router.push("/login?message=Account created successfully. Please sign in.")
       }
     } catch (err) {
-      setError('An unexpected error occurred. Please try again.');
-      console.error(err);
+      console.error("Unexpected signup error:", err);
+      setError("An unexpected error occurred. Please try again later.")
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
 
   return (
     <main className="min-h-screen bg-black text-white">

@@ -16,6 +16,7 @@ type ProductImage = {
   id: string
   url: string
   type: string
+  file?: File
 }
 
 export default function NewProductPage() {
@@ -24,6 +25,7 @@ export default function NewProductPage() {
   const [productImages, setProductImages] = useState<ProductImage[]>([])
   const [dragActive, setDragActive] = useState(false)
   const [currentUploadType, setCurrentUploadType] = useState<string>("")
+  const [productId, setProductId] = useState<string | null>(null)
 
   // Get required image types based on selected category
   const getRequiredImageTypes = (cat: ProductCategory): string[] => {
@@ -129,6 +131,11 @@ export default function NewProductPage() {
         formData.append('file', file)
         formData.append('type', currentUploadType)
         
+        // If we have a product ID, add it to the form data
+        if (productId) {
+          formData.append('productId', productId)
+        }
+        
         const response = await fetch('/api/upload', {
           method: 'POST',
           body: formData,
@@ -151,6 +158,7 @@ export default function NewProductPage() {
             id: Math.random().toString(36).substring(2, 9),
             url,
             type: currentUploadType,
+            file,
           },
         ])
 
@@ -158,7 +166,8 @@ export default function NewProductPage() {
         setCurrentUploadType("")
       } catch (error) {
         console.error('Error handling file:', error)
-        // You might want to show an error message to the user here
+        // Show error message to user
+        alert('Failed to upload image. Please try again.')
       }
     }
   }
@@ -181,26 +190,24 @@ export default function NewProductPage() {
       formData.append('description', (form.elements.namedItem('product-description') as HTMLTextAreaElement).value)
       formData.append('targetAudience', (form.elements.namedItem('product-target') as HTMLSelectElement).value)
       
-      // Add images
-      productImages.forEach((image) => {
+      // Add image data
+      productImages.forEach(image => {
         formData.append('imageType', image.type)
         formData.append('imageUrl', image.url)
       })
       
-      // Call the server action
+      // Use server action instead of direct Supabase client
       const result = await createProduct(formData)
       
       if (result.error) {
-        console.error('Error creating product:', result.error)
-        // You might want to show an error message to the user here
-        return
+        throw new Error(result.error)
       }
       
       // Redirect to products page on success
       router.push("/dashboard/products")
     } catch (error) {
       console.error('Error submitting form:', error)
-      // You might want to show an error message to the user here
+      alert('An unexpected error occurred. Please try again.')
     }
   }
 

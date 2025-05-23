@@ -66,7 +66,7 @@ export default function Hero() {
             transition={{ delay: 0.6, duration: 0.6 }}
           >
             <motion.div whileHover={{ x: 5 }} transition={{ type: "spring", stiffness: 400 }}>
-              <Link href="/contact" className="group flex items-center">
+              <Link href="/model-signup" className="group flex items-center">
                 <span className="w-8 h-8 rounded-full bg-white flex items-center justify-center mr-3">
                   <span className="text-black text-xs">01</span>
                 </span>

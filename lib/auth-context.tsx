@@ -1,8 +1,8 @@
 "use client"
 
 import { createContext, useContext, useEffect, useState } from "react"
-import { supabase } from "@/lib/supabase"
-import type { User, Session } from "@supabase/supabase-js"
+import { User as NextAuthUser } from "next-auth"
+import { signIn as nextAuthSignIn, signOut as nextAuthSignOut, useSession } from "next-auth/react"
 
 type Profile = {
   id: string
@@ -15,10 +15,25 @@ type Profile = {
   city: string
   country: string
   bio: string
+  notification_settings?: {
+    emailCampaigns: boolean
+    emailProducts: boolean
+    emailModels: boolean
+    emailAnalytics: boolean
+    pushCampaigns: boolean
+    pushProducts: boolean
+    pushModels: boolean
+    pushAnalytics: boolean
+  }
+  privacy_settings?: {
+    profileVisibility: string
+    dataSharing: boolean
+    marketingEmails: boolean
+  }
 }
 
 type AuthContextType = {
-  user: User | null
+  user: NextAuthUser | null
   profile: Profile | null
   loading: boolean
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>
@@ -30,108 +45,120 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
+  const { data: session, status } = useSession();
+  const user = session?.user || null;
   const [profile, setProfile] = useState<Profile | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(status === 'loading')
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
-      if (session?.user) {
-        fetchProfile(session.user.id)
-      }
-      setLoading(false)
-    })
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setUser(session?.user ?? null)
-      if (session?.user) {
-        await fetchProfile(session.user.id)
-      } else {
-        setProfile(null)
-      }
-      setLoading(false)
-    })
-
-    return () => {
-      subscription.unsubscribe()
+    setLoading(status === 'loading');
+    if (status === 'authenticated' && user) {
+      fetchProfile(user.id);
+    } else if (status === 'unauthenticated') {
+      setProfile(null);
     }
-  }, [])
+  }, [status, user]);
 
   const fetchProfile = async (userId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single()
+      // Fetch profile from MongoDB using the new API route
+      console.log("Fetching profile for user:", userId);
+      const response = await fetch(`/api/users/${userId}`);
 
-      if (error) {
-        console.error('Error fetching profile:', error)
-        return
+      if (!response.ok) {
+        // If the user is not found in MongoDB, it might be a new user
+        // or a user who hasn't completed their profile yet.
+        // We can handle this by setting a basic profile or null.
+        console.warn(`Profile not found for user ID: ${userId}. Status: ${response.status}`);
+        setProfile(null); // Or set a default basic profile
+        return;
       }
 
-      setProfile(data)
+      const profileData = await response.json();
+      setProfile(profileData);
+
     } catch (error) {
-      console.error('Error in fetchProfile:', error)
+      console.error('Error in fetchProfile:', error);
+      setProfile(null);
     }
   }
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const result = await nextAuthSignIn('credentials', {
+        redirect: false,
         email,
         password,
-      })
-      return { error }
+      });
+
+      if (result?.error) {
+        console.error("NextAuth signIn error:", result.error);
+        return { error: new Error(result.error) };
+      }
+
+      return { error: null };
     } catch (error) {
-      return { error: error as Error }
+      console.error("Unexpected error during signIn:", error);
+      return { error: error as Error };
     }
   }
 
   const signUp = async (email: string, password: string, profileData: Partial<Profile>) => {
     try {
-      const { data, error: signUpError } = await supabase.auth.signUp({
+      console.log("Attempting signup with:", { email, hasPassword: !!password, profileData });
+
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          fullName: profileData.full_name,
+          companyName: profileData.company_name,
+          industry: profileData.industry,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        console.error("API signup error:", result.error);
+        return { error: new Error(result.error) };
+      }
+
+      console.log("Signup API successful:", result);
+
+      const signInResult = await nextAuthSignIn('credentials', {
+        redirect: false,
         email,
         password,
-      })
+      });
 
-      if (signUpError) {
-        return { error: signUpError }
-      }
+       if (signInResult?.error) {
+        console.error("NextAuth signIn after signup error:", signInResult.error);
+       }
 
-      if (data.user) {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert([
-            {
-              id: data.user.id,
-              ...profileData,
-            },
-          ])
+      return { error: null };
 
-        if (profileError) {
-          // If profile creation fails, sign out the user
-          await supabase.auth.signOut()
-          return { error: profileError }
-        }
-      }
-
-      return { error: null }
     } catch (error) {
-      return { error: error as Error }
+      console.error("Unexpected error during signup:", error);
+      if (error instanceof Error && error.message.includes("fetch")) {
+        return { error: new Error("Network error. Please check your internet connection and try again.") };
+      }
+      return { error: error as Error };
     }
   }
 
   const signOut = async () => {
-    await supabase.auth.signOut()
+    await nextAuthSignOut({ redirect: false });
+    setProfile(null);
   }
 
   const refreshProfile = async () => {
     if (user) {
-      await fetchProfile(user.id)
+      await fetchProfile(user.id);
     }
   }
 

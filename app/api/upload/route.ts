@@ -1,83 +1,44 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from '@supabase/supabase-js';
-import jwt from "jsonwebtoken";
-
-// Define the JWT payload type
-interface JwtUserPayload {
-  id: string;
-  email: string;
-  iat: number;
-  exp: number;
-}
-
-// Create a Supabase client with the service role key
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { cloudinary } from "@/lib/cloudinary";
 
 export async function POST(request: NextRequest) {
   try {
-    // Get the token from the cookie
-    const token = request.cookies.get('auth-token')?.value;
-   
-    if (!token) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
-    // Verify JWT
-    let decodedToken: JwtUserPayload;
-    try {
-      decodedToken = jwt.verify(token, process.env.JWT_SECRET!) as JwtUserPayload;
-    } catch (error) {
-      return NextResponse.json(
-        { error: 'Invalid token' },
-        { status: 401 }
-      );
-    }
-
-    // Extract user ID
-    const userId = decodedToken.id;
-    
-    // Process the upload
+    // Parse the multipart form data
     const formData = await request.formData();
-    const file = formData.get('file') as File;
+    const file = formData.get('file') as Blob;
     const type = formData.get('type') as string;
-
+    const productId = formData.get('productId') as string;
+    
     if (!file || !type) {
       return NextResponse.json(
-        { error: 'Missing file or type' },
+        { error: 'File and type are required' },
         { status: 400 }
       );
     }
-    
-    // Use the original filename instead of generating a unique one
-    const fileExt = file.name.split('.').pop();
-    const filePath = `products/${userId}/${file.name}`;
 
-    // Upload to Supabase storage
-    const { error: uploadError } = await supabase.storage
-      .from('product-images')
-      .upload(filePath, file);
+    // Convert Blob to Buffer for Cloudinary
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
 
-    if (uploadError) {
-      console.error('Error uploading image:', uploadError);
-      return NextResponse.json(
-        { error: uploadError.message },
-        { status: 500 }
-      );
-    }
+    // Upload to Cloudinary
+    const result = await new Promise((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        {
+          folder: 'product-images',
+          resource_type: 'auto',
+        },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      ).end(buffer);
+    });
 
-    // Get public URL
-    const { data: { publicUrl } } = supabase.storage
-      .from('product-images')
-      .getPublicUrl(filePath);
-
-    // Return only the URL as expected by the frontend
+    // Return the Cloudinary URL
     return NextResponse.json({
-      url: publicUrl
+      url: (result as any).secure_url
     });
   } catch (error) {
     console.error('Error in upload route:', error);

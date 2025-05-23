@@ -1,8 +1,9 @@
 // File: app/api/auth/me/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import clientPromise from "@/lib/mongodb";
+import connectDB from "@/lib/mongodb";
 import jwt from "jsonwebtoken";
 import { ObjectId } from "mongodb";
+import mongoose from "mongoose";
 
 export async function GET(request: NextRequest) {
   try {
@@ -29,9 +30,15 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Get user from database
-    const client = await clientPromise;
-    const db = client.db(process.env.MONGODB_DB || "modelAgencyApp");
+    // Connect to MongoDB and get user from database
+    await connectDB();
+    const db = mongoose.connection.db;
+    if (!db) {
+      return NextResponse.json(
+        { error: "Database connection error" },
+        { status: 500 }
+      );
+    }
     const user = await db
       .collection("users")
       .findOne({ _id: new ObjectId(decoded.id) });

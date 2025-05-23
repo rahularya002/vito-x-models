@@ -1,26 +1,51 @@
-import { MongoClient } from "mongodb";
+import mongoose from 'mongoose';
+
+// Add type declaration for global.mongoose
+// eslint-disable-next-line no-var
+var globalThisWithMongoose = global as typeof globalThis & { mongoose?: { conn: any; promise: any } };
 
 if (!process.env.MONGODB_URI) {
-  throw new Error("Please add your Mongo URI to .env.local");
+  throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
 }
 
-const uri = process.env.MONGODB_URI;
-const options = {};
+const MONGODB_URI = process.env.MONGODB_URI;
+const MONGODB_DB = process.env.MONGODB_DB || 'vb';
 
-// Properly declare the global type extension
-declare global {
-  // eslint-disable-next-line no-var
-  var _mongoClientPromise: Promise<MongoClient> | undefined;
+let cached = globalThisWithMongoose.mongoose;
+
+if (!cached) {
+  cached = globalThisWithMongoose.mongoose = { conn: null, promise: null };
 }
 
-// Create a cached connection variable
-let client: MongoClient;
-const clientPromise: Promise<MongoClient> = (() => {
-  if (!global._mongoClientPromise) {
-    client = new MongoClient(uri, options);
-    global._mongoClientPromise = client.connect();
+if (!cached) {
+  throw new Error('Could not initialize mongoose cache');
+}
+cached = cached!;
+
+async function connectDB() {
+  if (cached!.conn) {
+    return cached!.conn;
   }
-  return global._mongoClientPromise;
-})();
 
-export default clientPromise;
+  if (!cached!.promise) {
+    const opts = {
+      bufferCommands: false,
+      dbName: MONGODB_DB
+    };
+
+    cached!.promise = mongoose.connect(MONGODB_URI!, opts).then((mongoose) => {
+      return mongoose;
+    });
+  }
+
+  try {
+    cached!.conn = await cached!.promise;
+  } catch (e) {
+    cached!.promise = null;
+    throw e;
+  }
+
+  return cached!.conn;
+}
+
+export default connectDB;

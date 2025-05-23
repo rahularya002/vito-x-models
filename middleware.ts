@@ -1,47 +1,82 @@
 // File: middleware.ts
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { jwtVerify } from "jose";
+import { getToken } from "next-auth/jwt";
 
-// Function to verify JWT token
-async function verifyToken(token: string): Promise<boolean> {
-  if (!token) return false;
-  
+export async function middleware(request: NextRequest) {
+  const path = request.nextUrl.pathname;
+
+  // Define public paths that don't require authentication
+  const publicPaths = ["/login", "/signup", "/admin/login", "/admin/signup"];
+  const isPublicPath = publicPaths.includes(path);
+
   try {
-    // Convert JWT_SECRET to Uint8Array for jose
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-    await jwtVerify(token, secret);
-    return true;
+    // Get the session token
+    const token = await getToken({ 
+      req: request,
+      secret: process.env.NEXTAUTH_SECRET 
+    });
+
+    // Handle admin routes
+    if (path.startsWith('/admin')) {
+      // If user is on a public admin path and is logged in as admin, redirect to admin page
+    if (isPublicPath && token && token.role === "admin") {
+      return NextResponse.redirect(new URL("/admin", request.url));
+    }
+
+    // If user is on a protected admin path and is not logged in, redirect to admin login
+    if (!isPublicPath && !token) {
+      return NextResponse.redirect(new URL("/admin/login", request.url));
+    }
+
+      // If user is logged in but not an admin, redirect to their dashboard
+    if (!isPublicPath && token && token.role !== "admin") {
+        return NextResponse.redirect(new URL("/dashboard", request.url));
+      }
+
+      // If user is admin and on admin routes, allow access
+      if (token && token.role === "admin") {
+        return NextResponse.next();
+      }
+    }
+    // Handle user dashboard routes
+    else if (path.startsWith('/dashboard')) {
+      // If user is not logged in, redirect to login
+      if (!token) {
+        return NextResponse.redirect(new URL("/login", request.url));
+      }
+
+      // If admin tries to access user dashboard, redirect to admin page
+      if (token.role === "admin") {
+        return NextResponse.redirect(new URL("/admin", request.url));
+      }
+
+      // If user is not admin and on dashboard routes, allow access
+      if (token && token.role !== "admin") {
+        return NextResponse.next();
+      }
+    }
+
+    // For all other routes, allow access
+    return NextResponse.next();
   } catch (error) {
-    console.error("Token verification failed:", error);
-    return false;
+    // In case of any errors, redirect to the appropriate login page
+    if (path.startsWith('/admin')) {
+      return NextResponse.redirect(new URL("/admin/login", request.url));
+    } else {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
   }
 }
 
-export async function middleware(req: NextRequest) {
-  const res = NextResponse.next();
-  
-  // Get auth token from cookies
-  const token = req.cookies.get("auth-token")?.value;
-  
-  // Check if token is valid
-  const isAuthenticated = token ? await verifyToken(token) : false;
-  
-  // If not authenticated and trying to access dashboard, redirect to login
-  if (!isAuthenticated && req.nextUrl.pathname.startsWith("/dashboard")) {
-    const redirectUrl = new URL("/login", req.url);
-    redirectUrl.searchParams.set("redirect", req.nextUrl.pathname);
-    return NextResponse.redirect(redirectUrl);
-  }
-  
-  // If authenticated and trying to access login/signup, redirect to dashboard
-  if (isAuthenticated && (req.nextUrl.pathname === "/login" || req.nextUrl.pathname === "/signup")) {
-    return NextResponse.redirect(new URL("/dashboard", req.url));
-  }
-  
-  return res;
-}
-
+// Configure the paths that should be handled by the middleware
 export const config = {
-  matcher: ["/login", "/signup", "/dashboard/:path*"],
+  matcher: [
+    "/admin/:path*",
+    "/dashboard/:path*",
+    "/login",
+    "/signup",
+    "/admin/login",
+    "/admin/signup"
+  ]
 };

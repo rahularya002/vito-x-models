@@ -36,7 +36,12 @@ export default function NewCampaignPage() {
         if (error) {
           setError(error)
         } else {
-          setProducts(fetchedProducts || [])
+          // Map collection_name to collection to match Product type
+          const mappedProducts = (fetchedProducts || []).map((p: any) => ({
+            ...p,
+            collection: p.collection_name || p.collection || '',
+          }));
+          setProducts(mappedProducts)
         }
       } catch (err) {
         setError("Failed to fetch products")
@@ -272,7 +277,7 @@ export default function NewCampaignPage() {
                         </div>
                         <div className="flex-1">
                           <h3 className="font-medium text-white">{product.name}</h3>
-                          <p className="text-white/70 text-sm">{product.category}</p>
+                          <p className="text-white/70 text-sm">{product.collection}</p>
                         </div>
                         {selectedProducts.includes(product.id) && (
                           <div className="h-6 w-6 rounded-full bg-red-800 flex items-center justify-center">

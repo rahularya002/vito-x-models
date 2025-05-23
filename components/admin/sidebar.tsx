@@ -1,8 +1,9 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { LayoutDashboard, Users, ClipboardList, Settings, LogOut } from "lucide-react"
+import { usePathname, useRouter } from "next/navigation"
+import { LayoutDashboard, Users, Settings, LogOut, UserRound, ShoppingBag } from "lucide-react"
+import { signOut } from "next-auth/react"
 
 const sidebarLinks = [
   {
@@ -16,9 +17,14 @@ const sidebarLinks = [
     icon: Users,
   },
   {
-    name: "Clients Requests",
-    href: "/admin/model-requests",
-    icon: ClipboardList,
+    name: "Product Requests",
+    href: "/admin/product-requests",
+    icon: ShoppingBag,
+  },
+  {
+    name: "Models",
+    href: "/admin/models",
+    icon: UserRound,
   },
   {
     name: "Settings",
@@ -29,6 +35,12 @@ const sidebarLinks = [
 
 export function AdminSidebar() {
   const pathname = usePathname()
+  const router = useRouter()
+
+  const handleLogout = async () => {
+    await signOut({ redirect: false })
+    router.push("/admin/login")
+  }
 
   return (
     <div className="w-64 bg-stone-900 h-full flex flex-col border-r border-white/10">
@@ -39,7 +51,7 @@ export function AdminSidebar() {
 
       <nav className="flex-1 px-4 space-y-1">
         {sidebarLinks.map((link) => {
-          const isActive = pathname === link.href
+          const isActive = pathname === link.href || pathname.startsWith(`${link.href}/`)
 
           return (
             <Link
@@ -57,13 +69,13 @@ export function AdminSidebar() {
       </nav>
 
       <div className="p-4 mt-auto border-t border-white/10">
-        <Link
-          href="/dashboard"
-          className="flex items-center px-4 py-3 text-white/70 hover:text-white rounded-lg hover:bg-stone-800 transition-colors"
+        <button
+          onClick={handleLogout}
+          className="flex items-center px-4 py-3 text-white/70 hover:text-white rounded-lg hover:bg-stone-800 transition-colors w-full"
         >
           <LogOut className="h-5 w-5 mr-3" />
           Exit Admin
-        </Link>
+        </button>
       </div>
     </div>
   )

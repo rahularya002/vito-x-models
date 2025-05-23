@@ -1,24 +1,17 @@
-import AboutUs from "@/components/About";
-import BrandCollaborations from "@/components/Brands";
-import FooterWithLogo from "@/components/Footer";
-import Hero from "@/components/Hero";
-import Models from "@/components/Models";
-import { Navbar } from "@/components/Navbar";
-import InstagramGallery from "@/components/Social";
-import TopModelsCarousel from "@/components/Top-Models";
-
+import { Header } from "@/components/header"
+import { VideoHeroSection } from "@/components/video-hero-section"
+import { ServicesSection } from "@/components/services-section"
+import { VideoShowcase } from "@/components/video-showcase"
+import { ModelsSection } from "@/components/models-section"
 
 export default function Home() {
   return (
-    <div>
-      <Navbar />
-      <Hero />
-      <Models />
-      <TopModelsCarousel id="our-models" />
-      <BrandCollaborations id="our-brands" />
-      <AboutUs id="about-us" />
-      <InstagramGallery id="social-platforms" />
-      <FooterWithLogo />
-    </div>
-  );
+    <main className="min-h-screen">
+      <Header />
+      <VideoHeroSection />
+      <ServicesSection />
+      <VideoShowcase />
+      <ModelsSection />
+    </main>
+  )
 }

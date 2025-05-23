@@ -3,6 +3,7 @@ import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { LayoutDashboard, ShoppingBag, Users, FileText, BarChart3, Settings, HelpCircle, LogOut } from "lucide-react"
 import { useState } from "react"
+import { useSession, signOut } from "next-auth/react"
 
 const sidebarLinks = [
   {
@@ -41,25 +42,13 @@ export function Sidebar() {
   const pathname = usePathname()
   const router = useRouter()
   const [isLoggingOut, setIsLoggingOut] = useState(false)
+  const { data: session } = useSession()
 
   const handleLogout = async () => {
     try {
       setIsLoggingOut(true)
-      
-      // Call the logout API route
-      const response = await fetch('/api/auth/logout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-
-      if (response.ok) {
-        // If logout was successful, redirect to home page
-        router.push('/')
-      } else {
-        console.error('Logout failed')
-      }
+      await signOut({ redirect: false })
+      router.push('/login')
     } catch (error) {
       console.error('Error during logout:', error)
     } finally {

@@ -1,13 +1,15 @@
 // File: app/api/auth/signup/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import clientPromise from "@/lib/mongodb";
+import connectToDatabase from '@/lib/mongodb';
+import { User } from '@/app/models/User';
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { email, password, fullName, companyName, industry } = body;
+
+    console.log('Signup attempt for:', email);
 
     // Validate required fields
     if (!email || !password || !fullName) {
@@ -25,14 +27,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Connect to MongoDB
-    const client = await clientPromise;
-    const db = client.db(process.env.MONGODB_DB || "modelAgencyApp");
-    const users = db.collection("users");
+    // Connect to database
+    const mongoose = await connectToDatabase();
+    if (!mongoose) {
+      console.error('Failed to connect to database');
+      throw new Error('Failed to connect to database');
+    }
+    console.log('Connected to database successfully');
 
     // Check if user already exists
-    const existingUser = await users.findOne({ email });
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
+      console.log('User already exists:', email);
       return NextResponse.json(
         { error: "Email already in use" },
         { status: 409 }
@@ -40,56 +46,53 @@ export async function POST(request: NextRequest) {
     }
 
     // Hash the password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await bcrypt.hash(password, 12);
 
     // Create new user
-    const newUser = {
+    const user = new User({
       email,
       password: hashedPassword,
-      fullName,
-      companyName: companyName || null,
-      industry: industry || null,
-      createdAt: new Date(),
-    };
+      full_name: fullName,
+      username: email.split('@')[0], // Use email prefix as username
+      status: 'active',
+      additional_info: {
+        company_name: companyName || null,
+        industry: industry || null
+      },
+      created_at: new Date(),
+      updated_at: new Date()
+    });
 
-    // Insert user into database
-    const result = await users.insertOne(newUser);
+    console.log('Attempting to save user:', {
+      email: user.email,
+      username: user.username,
+      full_name: user.full_name
+    });
 
-    // Generate JWT token
-    const token = jwt.sign(
-      { id: result.insertedId.toString(), email },
-      process.env.JWT_SECRET!,
-      { expiresIn: "7d" }
-    );
+    await user.save();
+    console.log('User saved successfully:', user._id.toString());
 
-    // Set HTTP-only cookie with the token
-    const response = NextResponse.json(
+    // Return user data without sensitive information
+    return NextResponse.json(
       {
         message: "User created successfully",
         user: {
-          id: result.insertedId.toString(),
-          email,
-          fullName,
-        },
+          id: user._id.toString(),
+          email: user.email,
+          fullName: user.full_name,
+          status: user.status
+        }
       },
       { status: 201 }
     );
-
-    // Set the token as an HTTP-only cookie
-    response.cookies.set({
-      name: "auth-token",
-      value: token,
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 60 * 60 * 24 * 7, // 1 week
-      path: "/",
-    });
-
-    return response;
-  } catch (err) {
-    console.error("Unexpected error during signup:", err);
+  } catch (error: any) {
+    console.error("Unexpected error during signup:", error);
+    if (error.code === 11000) {
+      return NextResponse.json(
+        { error: "Username or email already exists" },
+        { status: 400 }
+      );
+    }
     return NextResponse.json(
       { error: "An unexpected error occurred. Please try again." },
       { status: 500 }

@@ -1,11 +1,10 @@
 "use client"
 
 import type React from "react"
-
 import Image from "next/image"
 import Link from "next/link"
 import { Calendar, Instagram, Mail, Phone, User } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 export default function ModelApplicationPage() {
   const [formData, setFormData] = useState({
@@ -20,6 +19,9 @@ export default function ModelApplicationPage() {
   })
   const [ageError, setAgeError] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+  const [models, setModels] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -66,6 +68,22 @@ export default function ModelApplicationPage() {
       // Reset form or redirect
     }, 1000)
   }
+
+  useEffect(() => {
+    async function fetchModels() {
+      try {
+        const res = await fetch('/api/models')
+        if (!res.ok) throw new Error('Failed to fetch models')
+        const data = await res.json()
+        setModels(data)
+      } catch (err) {
+        setError('Failed to load models')
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchModels()
+  }, [])
 
   return (
     <div className="min-h-screen bg-black text-white">

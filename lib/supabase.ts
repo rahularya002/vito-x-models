@@ -30,9 +30,6 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   global: {
     headers: { 'x-application-name': 'vito-x-models' }
   },
-  db: {
-    schema: 'public'
-  }
 })
 
 export type Profile = {
@@ -107,28 +104,72 @@ export type Product = {
 }
 
 export async function getProfile(userId: string) {
+  if (!userId) {
+    console.warn("getProfile called with empty userId");
+    return null;
+  }
+
   try {
+    // First try to get the existing profile
     const { data, error } = await supabase
       .from("profiles")
       .select("*")
       .eq("id", userId)
       .single()
 
-    if (error) {
-      // Only log non-404 errors
-      if (error.code !== "PGRST116") {
-        console.error("Error fetching profile:", error)
-      }
-      return null
+    // If found, return it
+    if (data) {
+      return data as Profile;
     }
 
-    return data as Profile
-  } catch (error) {
-    // Only log unexpected errors
-    if (!(error as any)?.code?.includes("PGRST")) {
-      console.error("Unexpected error fetching profile:", error)
+    // If error is PGRST116 (no rows returned), create a new profile
+    if (error && error.code === "PGRST116") {
+      // Create default notification and privacy settings
+      const defaultNotificationSettings = {
+        emailCampaigns: true,
+        emailProducts: true,
+        emailModels: true,
+        emailAnalytics: true,
+        pushCampaigns: true,
+        pushProducts: true,
+        pushModels: true,
+        pushAnalytics: true
+      };
+      
+      const defaultPrivacySettings = {
+        profileVisibility: "public",
+        dataSharing: true,
+        marketingEmails: true
+      };
+
+      // Insert a new profile
+      const { data: newProfile, error: createError } = await supabase
+        .from("profiles")
+        .insert([{ 
+          id: userId,
+          notification_settings: defaultNotificationSettings,
+          privacy_settings: defaultPrivacySettings
+        }])
+        .select();
+      
+      if (createError) {
+        console.error("Error creating profile:", createError);
+        return null;
+      }
+      
+      // Return the first item from the array
+      return newProfile?.[0] as Profile || null;
     }
-    return null
+
+    // For other errors, log and return null
+    if (error) {
+      console.error("Error fetching profile:", error);
+    }
+    
+    return null;
+  } catch (error) {
+    console.error("Unexpected error in getProfile:", error);
+    return null;
   }
 }
 

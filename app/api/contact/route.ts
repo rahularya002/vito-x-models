@@ -1,6 +1,21 @@
 // app/api/contact/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import clientPromise from "@/lib/mongodb";
+import connectToDatabase from '@/lib/mongodb';
+import mongoose from 'mongoose';
+
+// Define Contact Schema
+const contactSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true },
+  company: String,
+  project: String,
+  budget: String,
+  message: { type: String, required: true },
+  created_at: { type: Date, default: Date.now }
+});
+
+// Create model if it doesn't exist
+const Contact = mongoose.models.Contact || mongoose.model('Contact', contactSchema);
 
 export async function POST(req: NextRequest) {
   try {
@@ -8,26 +23,38 @@ export async function POST(req: NextRequest) {
     const { name, email, company, project, budget, message } = body;
 
     if (!name || !email || !message) {
-      return NextResponse.json({ success: false, error: "Missing required fields" }, { status: 400 });
+      return NextResponse.json(
+        { success: false, error: "Missing required fields" },
+        { status: 400 }
+      );
     }
 
-    const client = await clientPromise;
-    const db = client.db("vb");
-    const collection = db.collection("contacts");
+    const mongoose = await connectToDatabase();
+    if (!mongoose) {
+      throw new Error('Failed to connect to database');
+    }
 
-    const result = await collection.insertOne({
+    const contact = new Contact({
       name,
       email,
       company,
       project,
       budget,
       message,
-      createdAt: new Date(),
+      created_at: new Date()
     });
 
-    return NextResponse.json({ success: true, insertedId: result.insertedId }, { status: 200 });
+    await contact.save();
+
+    return NextResponse.json(
+      { success: true, id: contact._id },
+      { status: 201 }
+    );
   } catch (error) {
     console.error("Error submitting contact form:", error);
-    return NextResponse.json({ success: false, error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }

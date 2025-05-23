@@ -1,8 +1,9 @@
 // File: app/api/auth/login/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import clientPromise from "@/lib/mongodb";
+import connectToDatabase from "@/lib/mongodb";
+import { Model } from "@/app/models/Model";
+import { User } from "@/app/models/User";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,52 +16,65 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Connect to MongoDB
-    const client = await clientPromise;
-    const db = client.db(process.env.MONGODB_DB || "modelAgencyApp");
-    const user = await db.collection("users").findOne({ email });
+    // Connect to database
+    const mongoose = await connectToDatabase();
+    if (!mongoose) {
+      throw new Error("Failed to connect to database");
+    }
 
-    if (!user) {
+    // Try to find user in both collections
+    const [client, model] = await Promise.all([
+      User.findOne({ email }),
+      Model.findOne({ email })
+    ]);
+
+    // If found in neither collection
+    if (!client && !model) {
       return NextResponse.json(
-        { error: "Invalid credentials" },
+        { error: "No user found with this email" },
         { status: 401 }
       );
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
+    // Determine which user we found and verify password
+    const user = client || model;
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    
+    if (!isPasswordValid) {
       return NextResponse.json(
-        { error: "Invalid credentials" },
+        { error: "Invalid password" },
         { status: 401 }
       );
     }
 
-    const token = jwt.sign(
-      { id: user._id.toString(), email: user.email },
-      process.env.JWT_SECRET!,
-      { expiresIn: "7d" }
-    );
+    // If it's a model, check their status
+    if (model) {
+      if (model.status === 'pending') {
+        return NextResponse.json(
+          { error: "Your model application is still pending approval" },
+          { status: 403 }
+        );
+      }
+      if (model.status === 'inactive') {
+        return NextResponse.json(
+          { error: "Your account has been deactivated. Please contact support." },
+          { status: 403 }
+        );
+      }
+    }
 
-    const response = NextResponse.json({
+    // Return success with user type and auth token
+    return NextResponse.json({
       message: "Login successful",
       user: {
         id: user._id.toString(),
         email: user.email,
-        fullName: user.fullName,
-      },
+        fullName: user.full_name,
+        status: user.status,
+        type: client ? 'client' : 'model',
+        role: model ? (model.status === "admin" ? "admin" : "model") : "client"
+      }
     });
-
-    response.cookies.set({
-      name: "auth-token",
-      value: token,
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 60 * 60 * 24 * 7, // 1 week
-      path: "/",
-    });
-
-    return response;
   } catch (error) {
     console.error("Login error:", error);
     return NextResponse.json(
