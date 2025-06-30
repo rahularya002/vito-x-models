@@ -1,114 +1,128 @@
 "use client"
 
-import type React from "react"
-import { useState } from "react"
+import { Sparkles, ArrowRight } from "lucide-react"
 import Link from "next/link"
-import Image from "next/image"
-import { Mail, Instagram, Facebook, Twitter, Linkedin } from "lucide-react"
 
-export default function FooterWithLogo() {
-  const [email, setEmail] = useState("")
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log("Subscribing email:", email)
-    setEmail("")
-  }
-
+export default function Footer() {
   return (
-    <footer className="bg-[#121212] text-white">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Top section with logo and navigation */}
-        <div className="flex flex-col md:flex-row justify-between items-center mb-6">
-          {/* Logo */}
-          <div className="mb-6 md:mb-0">
-            <Link href="/" className="inline-block">
-              <Image 
-                src="/images/logo/logo white.png" // Update with your actual logo path
-                alt="VB MODELS Logo"
-                width={120} 
-                height={50} 
-                className="h-12 w-auto"
-              />
-            </Link>
+    <footer className="bg-gradient-to-r from-red-900 to-red-800 text-white py-16 px-6 relative z-10">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+          <div>
+            <div className="flex items-center space-x-2 mb-6">
+              <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
+                <Sparkles className="w-5 h-5 text-red-600" />
+              </div>
+              <h3 className="text-xl font-bold">
+                <span className="text-white">Visionary</span>
+                <span className="text-red-300">Brothers</span>
+              </h3>
+            </div>
+            <p className="text-red-200 mb-6">
+              Revolutionizing commercial experiences with AI-powered creativity and cinematic storytelling.
+            </p>
+            <div className="flex space-x-4">
+              <a
+                href="#"
+                className="w-10 h-10 bg-red-700 rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
+              >
+                <span className="text-white">📱</span>
+              </a>
+              <a
+                href="#"
+                className="w-10 h-10 bg-red-700 rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
+              >
+                <span className="text-white">💼</span>
+              </a>
+              <a
+                href="#"
+                className="w-10 h-10 bg-red-700 rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
+              >
+                <span className="text-white">📸</span>
+              </a>
+              <a
+                href="#"
+                className="w-10 h-10 bg-red-700 rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
+              >
+                <span className="text-white">🎬</span>
+              </a>
+            </div>
           </div>
 
-          {/* Navigation */}
-          <nav>
-            <ul className="flex flex-wrap justify-center gap-4 md:gap-8">
+          <div>
+            <h3 className="text-lg font-semibold mb-6 text-white">Quick Links</h3>
+            <ul className="space-y-3">
               {[
-                { name: "OUR MODELS", path: "#our-models" },
-                { name: "OUR BRANDS", path: "#our-brands" },
-                { name: "ABOUT US", path: "#about-us" },
-                { name: "SOCIAL PLATFORMS", path: "#instagram" },
-              ].map((link) => (
-                <li key={link.name}>
-                  <Link 
-                    href={link.path} 
-                    className="text-sm md:text-base hover:text-red-500 transition-colors"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      const element = document.getElementById(link.path.substring(1));
-                      if (element) {
-                        element.scrollIntoView({ behavior: "smooth" });
-                      }
-                    }}
+                { name: "Home", href: "/" },
+                { name: "About Us", href: "/about" },
+                { name: "Services", href: "/services" },
+                { name: "Portfolio", href: "/portfolio" },
+                { name: "Blog", href: "/blog" },
+                { name: "Contact", href: "/contact" },
+              ].map((link, i) => (
+                <li key={i}>
+                  <Link
+                    href={link.href}
+                    className="text-red-200 hover:text-white transition-colors flex items-center group"
                   >
-                    {link.name}
+                    <ArrowRight className="w-4 h-4 mr-2 group-hover:translate-x-1 transition-transform" /> {link.name}
                   </Link>
                 </li>
               ))}
             </ul>
-          </nav>
-        </div>
-
-        {/* Divider */}
-        <div className="border-t border-gray-800 my-6"></div>
-
-        {/* Bottom section with social and newsletter */}
-        <div className="flex flex-col md:flex-row justify-between items-center">
-          {/* Social and copyright */}
-          <div className="mb-6 md:mb-0">
-            {/* Social icons */}
-            <div className="flex gap-4 mb-4">
-              {[Instagram, Facebook, Twitter, Linkedin].map((Icon, index) => (
-                <Link
-                  key={index}
-                  href="#" 
-                  aria-label={Icon.name}
-                  className="text-white hover:text-red-500 transition-colors"
-                >
-                  <Icon size={20} />
-                </Link>
-              ))}
-            </div>
-
-            {/* Copyright */}
-            <div className="text-sm text-gray-400">©2023 VB MODELS. All Rights Reserved</div>
           </div>
 
-          {/* Newsletter */}
           <div>
-            <h3 className="text-lg md:text-xl font-bold mb-4 text-center md:text-right">SUBSCRIBE TO OUR NEWSLETTER</h3>
-            <form onSubmit={handleSubmit} className="flex">
-              <div className="relative flex-grow">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Email Address"
-                  required
-                  className="w-full px-4 py-3 bg-[#2a1a1a] rounded-l-md focus:outline-none focus:ring-1 focus:ring-red-500"
-                />
-              </div>
-              <button
-                type="submit"
-                className="bg-red-700 hover:bg-red-800 px-4 py-3 rounded-r-md transition-colors"
-                aria-label="Subscribe"
-              >
-                <Mail size={20} />
+            <h3 className="text-lg font-semibold mb-6 text-white">Services</h3>
+            <ul className="space-y-3">
+              {[
+                "AI Commercial Ads",
+                "Short Films",
+                "Brand Storytelling",
+                "Visual Effects",
+                "Animation",
+                "Consultation",
+              ].map((service, i) => (
+                <li key={i}>
+                  <Link
+                    href="/services"
+                    className="text-red-200 hover:text-white transition-colors flex items-center group"
+                  >
+                    <ArrowRight className="w-4 h-4 mr-2 group-hover:translate-x-1 transition-transform" /> {service}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="text-lg font-semibold mb-6 text-white">Newsletter</h3>
+            <p className="text-red-200 mb-4">Subscribe to our newsletter for the latest updates and insights.</p>
+            <form className="space-y-3">
+              <input
+                type="email"
+                className="w-full px-4 py-3 rounded-lg bg-red-700/50 border border-red-600 text-white placeholder-red-300 focus:ring-2 focus:ring-red-400 focus:border-red-400 transition-all outline-none"
+                placeholder="Your email address"
+              />
+              <button className="w-full bg-white text-red-600 hover:bg-red-100 py-3 font-semibold rounded-lg transition-all duration-300">
+                Subscribe
               </button>
             </form>
+          </div>
+        </div>
+
+        <div className="border-t border-red-700 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+          <p className="text-red-300 text-center md:text-left">© 2025 Visionary Brothers. All rights reserved.</p>
+          <div className="mt-4 md:mt-0 flex space-x-6">
+            <Link href="/privacy" className="text-red-300 hover:text-white transition-colors">
+              Privacy Policy
+            </Link>
+            <Link href="/terms" className="text-red-300 hover:text-white transition-colors">
+              Terms of Service
+            </Link>
+            <Link href="/cookies" className="text-red-300 hover:text-white transition-colors">
+              Cookies Policy
+            </Link>
           </div>
         </div>
       </div>
